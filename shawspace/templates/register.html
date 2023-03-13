@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+  <meta charset="UTF-8">
+  <title>Register</title>
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+<link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
+<link rel="stylesheet" type="text/css" href="../static/css/register.css">
+
+</head>
+<body>
+<!-- partial:index.partial.html -->
+<div class="box-form">
+	<div class="left">
+		<div class="overlay">
+		<h1>Hello World.</h1>
+		<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+		Curabitur et est sed felis aliquet sollicitudin</p>
+		<span>
+			<p>login with social media</p>
+			<a href="#"><i class="fa fa-facebook" aria-hidden="true"></i></a>
+			<a href="#"><i class="fa fa-twitter" aria-hidden="true"></i> Login with Twitter</a>
+		</span>
+		</div>
+	</div>
+
+	<!-- <div class="col-md-8">
+		{% with messages = get_flashed_messages(with_categories=true) %}
+		  {% if messages %}
+			{% for category, message in messages %}
+			  <div class="alert alert-{{ category }}">
+				{{ message }}
+			  </div>
+			{% endfor %}
+		  {% endif %}
+		{% endwith %}
+		{% block content %}{% endblock %}
+	  </div> -->
+	
+	
+		<div class="right">
+		<h4>Register</h4>
+		<form method="POST" action="">
+			{{ form.hidden_tag() }}
+			<input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+			<label for="fname">Username:</label><br>
+			<input type="text" id="fname" name="username"><br>
+			<label for="email">Email:</label><br>
+			<input type="text" id="email" name="email"><br>
+			<label for="password">Password:</label><br>
+			<input type="password" id="password" name="password"><br>
+			<label for="confirm_password">Confirm Password:</label><br>
+			<input type="password" id="confirm_password" name="confirm_password"><br>
+			<label for="role">Are you a mentor?</label><br>
+			<input type="checkbox" id="role" name="role"><br>
+			<label for="role">Machine Learning</label><br>
+			<input type="checkbox" id="Machine_Learning" name="Machine_Learning"><br>
+			<label for="role">Competitive Programming</label><br>
+			<input type="checkbox" id="Competitive_Programming" name="Competitive_Programming"><br>
+			<label for="role">Web Development</label><br>
+			<input type="checkbox" id="web_development" name="web_development"><br>
+			<label for="role">App Development</label><br>
+			<input type="checkbox" id="app_development" name="app_development"><br>
+			<label for="role">Cybersecurity</label><br>
+			<input type="checkbox" id="cybersecurity" name="cybersecurity"><br>
+			<label for="role">Finance</label><br>
+			<input type="checkbox" id="finance" name="finance"><br>
+			<label for="Submit"></label><br>
+			<input type="submit"><br>
+		  </form>
+			
+			<br><br>
+			
+		<div class="remember-me--forget-password">
+				<!-- Angular -->
+	<label>
+		<input type="checkbox" name="item" checked/>
+		<span class="text-checkbox">Remember me</span>
+	</label>
+			<p>forget password?</p>
+		</div>
+			
+			<br>
+			<!-- <button>SUBMIT</button> -->
+	</div>
+	
+</div>
+<!-- partial -->
+  
+</body>
+</html>
