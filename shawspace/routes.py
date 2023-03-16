@@ -10,7 +10,7 @@ def index():
     return render_template('index.html')
 
 def match(x1,x2,x3,x4,x5,x6):
-    mentor_list=Mentor.query.all()
+    mentor_list=Mentor.query.filter(Mentor.mentee_count<5)
     max_interests_matched=0
     mentor_id=0
     for mentor in mentor_list:
@@ -30,6 +30,7 @@ def match(x1,x2,x3,x4,x5,x6):
 
         if max_interests_matched<interests_matched:
             mentor_id=mentor.id
+            
     
     return mentor_id
 
@@ -65,6 +66,8 @@ def register():
                            CyberSecurity=form.cybersecurity.data, Finance=form.finance.data)
             db.session.add(mentee)
             db.session.add(user)
+            mentor1=Mentor.query.filter_by(id=mentor_id).first()
+            mentor1.mentee_count=mentor1.mentee_count+1
             db.session.commit()
             # flash('your account has been created, you are now able to log in', 'success')
             return redirect(url_for('login'))
@@ -84,3 +87,8 @@ def login():
             return redirect(url_for('register'))
             # flash('Login Unsuccessful', 'danger')
     return render_template('login.html', title='Login', form=form)
+
+
+@app.route("/404")
+def error():
+     return render_template('404.html', title='404')

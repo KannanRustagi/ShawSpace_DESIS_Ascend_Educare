@@ -43,4 +43,4 @@ class Mentor(db.Model):
     CyberSecurity=db.Column(db.Boolean, default=False)
     Finance=db.Column(db.Boolean, default=False)
     mentees=db.relationship('Mentee', backref='mentor', lazy=True)
-    mentee_count=db.Column(db.Integer, default=0)
+    mentee_count=db.Column(db.Integer, default=0, nullable=False)
