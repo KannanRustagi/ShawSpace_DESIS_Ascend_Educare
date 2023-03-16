@@ -1,9 +1,35 @@
-from curses import flash
-from flask import render_template, url_for, redirect
+
+from flask import render_template, url_for, redirect, request
 from shawspace import app, db, bcrypt
 from shawspace.forms import RegistrationForm, LoginForm
 from shawspace.models import User,Mentor, Mentee
 from flask_login import login_user
+from werkzeug.security import generate_password_hash, check_password_hash
+from sqlalchemy import Column, Integer, String
+from flask_sqlalchemy import SQLAlchemy
+from flask_bootstrap import Bootstrap
+
+# app.config['SQLALCHEMY_DATABASE_URI'] = "sqlite:///students.db"
+# app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+# db1 = SQLAlchemy(app)
+# app.secret_key = "akanksha"
+# Bootstrap(app)
+#
+#
+# class Signup(db1.Model):
+#     __tablename__ = 'signup'
+#     first_name = Column(String, nullable=False)
+#     password = Column(String, nullable=False)
+#
+#     def add_newuser(self, first_name, password):
+#         new_user = Signup(first_name=first_name, password=password)
+#
+#         db1.session.add(new_user)
+#         db1.session.commit()
+#
+#
+# db1.create_all()
+
 
 @app.route('/')
 def index():
@@ -75,8 +101,22 @@ def register():
     return render_template('register.html', title='Register', form=form)
 
 
-@app.route("/login",methods=['GET', 'POST'])
+@app.route("/login", methods=['GET', 'POST'])
 def login():
+    # if request.method == 'POST':
+    #     username = request.form['username']
+    #     password = request.form['password']
+    #     users = Signup.query.all()
+    #     for user in users:
+    #         if username == user.first_name and password == user.password:
+    #             return render_template('mentee.html')
+    #
+    #     else:
+    #         # Failed login
+    #         return "Incorrect username or password"
+    # else:
+    #     # GET request, render the login form
+    #     return render_template('login.html')
     form=LoginForm()
     if form.validate_on_submit():
         user=User.query.filter_by(email=form.email.data).first()
@@ -86,9 +126,11 @@ def login():
         else:
             return redirect(url_for('register'))
             # flash('Login Unsuccessful', 'danger')
-    return render_template('login.html', title='Login', form=form)
+    return render_template('login1.html', title='Login', form=form)
 
 
 @app.route("/404")
 def error():
      return render_template('404.html', title='404')
+
+
