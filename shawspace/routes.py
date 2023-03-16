@@ -35,6 +35,12 @@ from flask_bootstrap import Bootstrap
 def index():
     return render_template('index.html')
 
+
+@app.route('/home')
+def home():
+    return render_template('home.html')
+
+
 def match(x1,x2,x3,x4,x5,x6):
     mentor_list=Mentor.query.filter(Mentor.mentee_count<5)
     max_interests_matched=0
