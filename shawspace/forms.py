@@ -1,7 +1,7 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, SubmitField, BooleanField, TextAreaField
 from wtforms.validators import DataRequired, Length, Email, EqualTo, ValidationError
-from shawspace.models import Mentor, Mentee
+from shawspace.models import Mentor, Mentee, User
 
 class RegistrationForm(FlaskForm):
     username = StringField('Username', 
@@ -39,3 +39,8 @@ class LoginForm(FlaskForm):
     role=BooleanField('Are you a mentor?')
     remember=BooleanField('Remember me')
     submit= SubmitField('Login')
+
+class ReminderForm_Mentor(FlaskForm):
+    subject=TextAreaField('Subject', validators=[DataRequired()])
+    mail_content=TextAreaField('Mail', validators=[DataRequired()])
+

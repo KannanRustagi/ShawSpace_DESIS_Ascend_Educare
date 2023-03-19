@@ -1,9 +1,10 @@
+from datetime import datetime
 from shawspace import db, login_manager
 from flask_login import UserMixin
 
 @login_manager.user_loader
 def load_user(user_id):
-    return Mentee.query.get(int(user_id))
+    return User.query.get(int(user_id))
 
 class User(db.Model, UserMixin):
     id=db.Column(db.Integer, primary_key=True)
@@ -43,4 +44,11 @@ class Mentor(db.Model):
     CyberSecurity=db.Column(db.Boolean, default=False)
     Finance=db.Column(db.Boolean, default=False)
     mentees=db.relationship('Mentee', backref='mentor', lazy=True)
-    mentee_count=db.Column(db.Integer, default=0, nullable=False)
+    mentee_count=db.Column(db.Integer, default=0, nullable=False)    
+
+class Messages(db.Model):
+    id=db.Column(db.Integer, primary_key=True)
+    mentor_id=db.Column(db.Integer, db.ForeignKey('mentor.id'))
+    sender=db.Column(db.String(100),nullable=False)
+    message_content=db.Column(db.String(1000),nullable=False)
+    time_stamp=db.Column(db.DateTime, nullable=False, default=datetime.utcnow)

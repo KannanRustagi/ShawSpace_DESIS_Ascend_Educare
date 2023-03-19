@@ -1,45 +1,14 @@
-
+from curses import flash
 from flask import render_template, url_for, redirect, request
-from shawspace import app, db, bcrypt
-from shawspace.forms import RegistrationForm, LoginForm
-from shawspace.models import User,Mentor, Mentee
-from flask_login import login_user
-from werkzeug.security import generate_password_hash, check_password_hash
-from sqlalchemy import Column, Integer, String
-from flask_sqlalchemy import SQLAlchemy
-from flask_bootstrap import Bootstrap
-
-# app.config['SQLALCHEMY_DATABASE_URI'] = "sqlite:///students.db"
-# app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-# db1 = SQLAlchemy(app)
-# app.secret_key = "akanksha"
-# Bootstrap(app)
-#
-#
-# class Signup(db1.Model):
-#     __tablename__ = 'signup'
-#     first_name = Column(String, nullable=False)
-#     password = Column(String, nullable=False)
-#
-#     def add_newuser(self, first_name, password):
-#         new_user = Signup(first_name=first_name, password=password)
-#
-#         db1.session.add(new_user)
-#         db1.session.commit()
-#
-#
-# db1.create_all()
-
+from shawspace import app, db, bcrypt,mail
+from shawspace.forms import RegistrationForm, LoginForm, ReminderForm_Mentor
+from shawspace.models import User,Mentor, Mentee, Messages
+from flask_login import login_user, current_user, logout_user, login_required
+from flask_mail import Mail, Message
 
 @app.route('/')
 def index():
     return render_template('index.html')
-
-
-@app.route('/home')
-def home():
-    return render_template('home.html')
-
 
 def match(x1,x2,x3,x4,x5,x6):
     mentor_list=Mentor.query.filter(Mentor.mentee_count<5)
@@ -68,6 +37,8 @@ def match(x1,x2,x3,x4,x5,x6):
 
 @app.route("/register",methods=['GET', 'POST'])
 def register():
+    if current_user.is_authenticated:
+        return redirect(url_for('index'))
     form=RegistrationForm()
     if form.validate_on_submit():
         hashed_pw=bcrypt.generate_password_hash(form.password.data).decode('utf-8')
@@ -81,6 +52,7 @@ def register():
                            Competitive_Programming=form.competitive_programming.data, Machine_Learning=form.machine_learning.data,
                            CyberSecurity=form.cybersecurity.data, Finance=form.finance.data)
             db.session.add(mentor)
+            
             db.session.add(user)
             db.session.commit()
             # flash('your account has been created, you are now able to log in', 'success')
@@ -107,32 +79,24 @@ def register():
     return render_template('register.html', title='Register', form=form)
 
 
-@app.route("/login", methods=['GET', 'POST'])
+@app.route("/login",methods=['GET', 'POST'])
 def login():
-    # if request.method == 'POST':
-    #     username = request.form['username']
-    #     password = request.form['password']
-    #     users = Signup.query.all()
-    #     for user in users:
-    #         if username == user.first_name and password == user.password:
-    #             return render_template('mentee.html')
-    #
-    #     else:
-    #         # Failed login
-    #         return "Incorrect username or password"
-    # else:
-    #     # GET request, render the login form
-    #     return render_template('login.html')
+    print("hhhh")
+    if current_user.is_authenticated:
+        print("hello")
+        return redirect(url_for('index'))
+    print("hi")
     form=LoginForm()
     if form.validate_on_submit():
         user=User.query.filter_by(email=form.email.data).first()
         if user and bcrypt.check_password_hash(user.password, form.password.data):
             login_user(user, remember=form.remember.data)
-            return redirect(url_for('index'))
+            next_page=request.args.get('next')
+            return redirect(next_page) if next_page else redirect(url_for('index'))
         else:
             return redirect(url_for('register'))
             # flash('Login Unsuccessful', 'danger')
-    return render_template('login1.html', title='Login', form=form)
+    return render_template('login.html', title='Login', form=form)
 
 
 @app.route("/404")
@@ -140,3 +104,36 @@ def error():
      return render_template('404.html', title='404')
 
 
+@app.route("/logout")
+def logout():
+     logout_user()
+     return redirect(url_for('index'))
+
+@app.route("/reminder")
+@login_required
+def reminder():
+    if current_user.role=='mentor':
+        form=ReminderForm_Mentor()
+        recipients_id=Mentee.query.filter_by(mentor_id=current_user.id)
+        recipients_mails=[]
+        for mentee in recipients_id:
+            recipients_mails.append(mentee.email)
+        msg = Message(
+                form.subject.data,
+                sender =current_user.email,
+                recipients = recipients_mails
+               )
+        msg.body = form.mail_content.data
+        mail.send(msg)
+        return render_template('mentors.html', title='Reminder', form=form)
+
+@app.route("/chat")
+@login_required
+def chat():
+    if current_user.role=='mentor':
+        group_id=current_user.id
+    else:
+        group_id=current_user.mentor_id
+
+    messages=Messages.query.filter_by(mentor_id=group_id)
+       
