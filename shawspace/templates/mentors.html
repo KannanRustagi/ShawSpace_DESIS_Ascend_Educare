@@ -21,7 +21,8 @@
         </form>
         </div>
         <div class="right">
-            <form class="contentright">
+            <form class="contentright" method="POST" action="">
+                {{ form.hidden_tag() }}
                 <!-- <input type="text" name="name" class="box1" placeholder="Date" ></input> -->
                 <!-- <input type="text"  class="box2"  placeholder="Batch Name"></input> -->
                 <input type="text" class="box3" placeholder="Subject" name="subject"></input>

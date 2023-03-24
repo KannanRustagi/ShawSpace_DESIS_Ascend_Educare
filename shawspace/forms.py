@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SubmitField, BooleanField, TextAreaField
+from wtforms import StringField, PasswordField, SubmitField, BooleanField, TextAreaField, RadioField
 from wtforms.validators import DataRequired, Length, Email, EqualTo, ValidationError
 from shawspace.models import Mentor, Mentee, User
 
@@ -41,6 +41,11 @@ class LoginForm(FlaskForm):
     submit= SubmitField('Login')
 
 class ReminderForm_Mentor(FlaskForm):
-    subject=TextAreaField('Subject', validators=[DataRequired()])
-    mail_content=TextAreaField('Mail', validators=[DataRequired()])
+    subject=StringField('Subject', validators=[DataRequired()])
+    mail_content=StringField('Mail', validators=[DataRequired()])
+
+class GroupChatForm(FlaskForm):
+    username = StringField('Username', validators=[DataRequired()])
+    room_code = StringField('Room Code', validators=[DataRequired()])
+    action = RadioField ('Action', choices=[('create', 'Create Room'),('join', 'Join Room')], default='create')
 

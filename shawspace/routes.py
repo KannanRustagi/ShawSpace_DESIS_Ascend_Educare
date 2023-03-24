@@ -1,10 +1,13 @@
+import random
 from curses import flash
-from flask import render_template, url_for, redirect, request
-from shawspace import app, db, bcrypt,mail
-from shawspace.forms import RegistrationForm, LoginForm, ReminderForm_Mentor
+from flask import render_template, url_for, redirect, request, session
+from shawspace import app, db, bcrypt,mail, socketio
+from shawspace.forms import RegistrationForm, LoginForm, ReminderForm_Mentor, GroupChatForm
 from shawspace.models import User,Mentor, Mentee, Messages
 from flask_login import login_user, current_user, logout_user, login_required
 from flask_mail import Mail, Message
+from flask_socketio import join_room, leave_room, send, SocketIO, emit
+from string import ascii_uppercase
 
 @app.route('/')
 def index():
@@ -109,31 +112,144 @@ def logout():
      logout_user()
      return redirect(url_for('index'))
 
-@app.route("/reminder")
+@app.route("/reminder", methods=['POST', 'GET'])
 @login_required
 def reminder():
     if current_user.role=='mentor':
         form=ReminderForm_Mentor()
+        subject=request.form.get('subject')
+        body=request.form.get('mail_content')
         recipients_id=Mentee.query.filter_by(mentor_id=current_user.id)
         recipients_mails=[]
         for mentee in recipients_id:
             recipients_mails.append(mentee.email)
         msg = Message(
-                form.subject.data,
-                sender =current_user.email,
+                subject,
+                sender ='shawspace8@gmail.com',
                 recipients = recipients_mails
                )
-        msg.body = form.mail_content.data
+        msg.body = body
         mail.send(msg)
         return render_template('mentors.html', title='Reminder', form=form)
 
-@app.route("/chat")
+@app.route("/profile")
 @login_required
-def chat():
+def profile():
     if current_user.role=='mentor':
-        group_id=current_user.id
-    else:
-        group_id=current_user.mentor_id
+        return render_template('mentor_profile.html', title='Profile')
+    if current_user.role=='mentee':
+        return render_template('mentee_profile.html', title='Profile')
+    
+rooms = {}
 
-    messages=Messages.query.filter_by(mentor_id=group_id)
+def generate_unique_code(length):
+    while True:
+        code = ""
+        for _ in range(length):
+            code += random.choice(ascii_uppercase)
+
+        if code not in rooms:
+            break
+
+    return code
+
+@app.route("/group_chat", methods=["POST", "GET"])
+def group_chat():
+    session.clear()
+    form=GroupChatForm()
+    if request.method == "POST":
+        name = request.form.get("name")
+        code = request.form.get("code")
+        join = request.form.get("join", False)
+        create = request.form.get("create", False)
+
+        if not name:
+            return render_template("home1.html", error="Please enter a name.", code=code, name=name, form=form)
+
+        if join != False and not code:
+            return render_template("home1.html", error="Please enter a room code.", code=code, name=name, form=form)
+
+        room = code
+        if create != False:
+            room = generate_unique_code(4)
+            rooms[room] = {"members": 0, "messages": []}
+        elif code not in rooms:
+            return render_template("home1.html", error="Room does not exist.", code=code, name=name, form=form)
+
+        session["room"] = room
+        session["name"] = name
+        return redirect(url_for("room"))
+
+    return render_template("home1.html", form=form)
+
+
+@app.route("/room")
+def room():
+    room = session.get("room")
+    if room is None or session.get("name") is None or room not in rooms:
+        return redirect(url_for("home"))
+
+    return render_template("room.html", code=room, messages=rooms[room]["messages"])
+
+
+@socketio.on("message")
+def message(data):
+    room = session.get("room")
+    if room not in rooms:
+        return
+
+    content = {
+        "name": session.get("name"),
+        "message": data["data"]
+    }
+    send(content, to=room)
+    rooms[room]["messages"].append(content)
+    print(f"{session.get('name')} said: {data['data']}")
+
+
+@socketio.on("connect")
+def connect(auth):
+    room = session.get("room")
+    name = session.get("name")
+    if not room or not name:
+        return
+    if room not in rooms:
+        leave_room(room)
+        return
+
+    join_room(room)
+    send({"name": name, "message": "has entered the room"}, to=room)
+    rooms[room]["members"] += 1
+    print(f"{name} joined room {room}")
+
+
+@socketio.on("disconnect")
+def disconnect():
+    room = session.get("room")
+    name = session.get("name")
+    leave_room(room)
+
+    if room in rooms:
+        rooms[room]["members"] -= 1
+        if rooms[room]["members"] <= 0:
+            del rooms[room]
+
+    send({"name": name, "message": "has left the room"}, to=room)
+    print(f"{name} has left the room {room}")
+    
+
+
+# @app.route("/chat")
+# @login_required
+# def chat():
+#     if current_user.role=='mentor':
+#         group_id=current_user.id
+#     else:
+#         group_id=current_user.mentor_id
+
+#     messages=Messages.query.filter_by(mentor_id=group_id)   
+    
+    
+
+
        
