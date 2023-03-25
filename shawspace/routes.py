@@ -142,7 +142,7 @@ def reminder():
         subject=request.form.get('subject')
         body=request.form.get('mail_content')
         mentee=Mentee.query.filter_by(username=current_user.username).first()
-        mentor=Mentor.query.filter_by(id=mentee.mentor_id)
+        mentor=Mentor.query.filter_by(id=mentee.mentor_id).first()
         recipients_mails=[]
         recipients_mails.append(mentor.email)
         msg = Message(
