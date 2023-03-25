@@ -5,7 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>pg2</title>
-    <link rel="stylesheet" type="text/css" href="mentee.css">
+    <link rel="stylesheet" type="text/css" href="../static/css/mentors.css">
 </head>
 <body>
     <section>
@@ -13,19 +13,20 @@
         <div class="left">
             <form class="contentleft">
             <div class="imgbx">
-                <img src="kindpng_1636340 1.jpg" class="image">
+                <img src="../static/img/kindpng_1636340 1.jpg" class="image">
             </div>
-            <div class="horzbx">Mentee Name</div>
+            <div class="horzbx">{{ current_user.username }}</div>
             <div class="smallbx1">Mentee</div>
             <div class="smallbx2">De Shaw</div>
         </form>
         </div>
         <div class="right">
-            <form class="contentright">
-                <input type="text" name="name" class="box1" placeholder="Date" ></input>
-                <input type="text"  class="box2"  placeholder="Batch Name"></input>
-                <input type="text" class="box3" placeholder="Subject"></input>
-                <input type="text" class="box4" placeholder="Mail"></input>
+            <form class="contentright" method="POST" action="">
+                {{ form.hidden_tag() }}
+                <!-- <input type="text" name="name" class="box1" placeholder="Date" ></input> -->
+                <!-- <input type="text"  class="box2"  placeholder="Batch Name"></input> -->
+                <input type="text" class="box3" placeholder="Subject" name="subject"></input>
+                <input type="text" class="box4" placeholder="Mail" name="mail_content"></input>
                 <button type="text" class="box5">Send Email</button>
             </form>
         </div>

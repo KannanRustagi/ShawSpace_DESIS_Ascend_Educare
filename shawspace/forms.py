@@ -44,8 +44,13 @@ class ReminderForm_Mentor(FlaskForm):
     subject=StringField('Subject', validators=[DataRequired()])
     mail_content=StringField('Mail', validators=[DataRequired()])
 
+class ReminderForm_Mentee(FlaskForm):
+    subject=StringField('Subject', validators=[DataRequired()])
+    mail_content=StringField('Mail', validators=[DataRequired()])
+
 class GroupChatForm(FlaskForm):
     username = StringField('Username', validators=[DataRequired()])
     room_code = StringField('Room Code', validators=[DataRequired()])
     action = RadioField ('Action', choices=[('create', 'Create Room'),('join', 'Join Room')], default='create')
+
 

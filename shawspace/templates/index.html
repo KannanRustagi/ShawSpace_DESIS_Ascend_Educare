@@ -55,23 +55,31 @@
                 </button>
                 <div class="collapse navbar-collapse" id="navbarCollapse">
                     <div class="navbar-nav ms-auto py-0">
-                        <a href={{url_for('index')}} class="nav-item nav-link active">Home</a>
-                        <a href={{url_for('reminder')}} class="nav-item nav-link">reminder</a>
+                        <!-- <a href={{url_for('index')}} class="nav-item nav-link active">Home</a>
+                        <a href={{url_for('reminder')}} class="nav-item nav-link">reminder</a> -->
 
-                        <div class="nav-item dropdown">
+                        <!-- <div class="nav-item dropdown">
                             <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Pages</a>
                             <div class="dropdown-menu m-0">
                                 <a href="team.html" class="dropdown-item">Our Team</a>
                                 <a href="testimonial.html" class="dropdown-item">Testimonial</a>
                                 <a href="404.html" class="dropdown-item">404 Page</a>
                             </div>
-                        </div>
-                        {% if current_user.is_authenticated %}
-                        <a href={{url_for('profile')}} class="nav-item nav-link">View Profile</a>
+                        </div> -->
+                        {% if current_user.is_authenticated %}  
+                            <a href={{url_for('index')}} class="nav-item nav-link active">Home</a>
+                            <a href={{url_for('profile')}} class="nav-item nav-link active">Profile</a>
+                            <a href={{url_for('reminder')}} class="nav-item nav-link active">Reminders</a>
+                            <a href={{url_for('group_chat')}} class="nav-item nav-link active">Group chat</a>
+                        {% else %}
+                            <a href={{url_for('register')}} class="nav-item nav-link active">Register</a>
+                            <a href={{url_for('login')}} class="nav-item nav-link active">Sign In</a>
                         {% endif %}
                     </div>
-                    <button type="button" class="btn text-secondary ms-3" data-bs-toggle="modal" data-bs-target="#searchModal"><i class="fa fa-search"></i></button>
-                    <a href={{url_for('login')}} class="btn btn-secondary text-light rounded-pill py-2 px-4 ms-3">Sign In</a>
+                    {% if current_user.is_authenticated %} 
+                        <button type="button" class="btn text-secondary ms-3" data-bs-toggle="modal" data-bs-target="#searchModal"><i class="fa fa-search"></i></button>
+                        <a href={{url_for('logout')}} class="btn btn-secondary text-light rounded-pill py-2 px-4 ms-3">LogOut</a>
+                    {% endif %}
                 </div>
             </nav>
 
@@ -81,8 +89,8 @@
                         <div class="col-lg-6 text-center text-lg-start">
                             <h1 class="text-white mb-4 animated zoomIn">ShawSpace - The ultimate place for all DE Shaw Mentees</h1>
                             <p class="text-white pb-3 animated zoomIn">A platform for all DE shaw mentees to form groups based on their common skills and interests.</p>
-                            <a href="" class="btn btn-light py-sm-3 px-sm-5 rounded-pill me-3 animated slideInLeft">Sign In</a>
-                            <a href="" class="btn btn-outline-light py-sm-3 px-sm-5 rounded-pill animated slideInRight">Register</a>
+                            <a href={{url_for('login')}} class="btn btn-light py-sm-3 px-sm-5 rounded-pill me-3 animated slideInLeft">Sign In</a>
+                            <a href={{url_for('register')}} class="btn btn-outline-light py-sm-3 px-sm-5 rounded-pill animated slideInRight">Register</a>
                         </div>
                         <div class="col-lg-6 text-center text-lg-start">
                             <img class="img-fluid" src="static/img/hero.png" alt="">

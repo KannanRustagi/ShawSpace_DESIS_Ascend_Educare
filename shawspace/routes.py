@@ -1,8 +1,7 @@
 import random
-from curses import flash
-from flask import render_template, url_for, redirect, request, session
+from flask import flash, render_template, url_for, redirect, request, session
 from shawspace import app, db, bcrypt,mail, socketio
-from shawspace.forms import RegistrationForm, LoginForm, ReminderForm_Mentor, GroupChatForm
+from shawspace.forms import RegistrationForm, LoginForm, ReminderForm_Mentor, GroupChatForm, ReminderForm_Mentee
 from shawspace.models import User,Mentor, Mentee, Messages
 from flask_login import login_user, current_user, logout_user, login_required
 from flask_mail import Mail, Message
@@ -16,26 +15,28 @@ def index():
 def match(x1,x2,x3,x4,x5,x6):
     mentor_list=Mentor.query.filter(Mentor.mentee_count<5)
     max_interests_matched=0
-    mentor_id=0
-    for mentor in mentor_list:
-        interests_matched=0
-        if x1==True and x1==mentor.Web_development:
-            interests_matched=interests_matched+1
-        if x2==True and x2==mentor.App_development:
-            interests_matched=interests_matched+1
-        if(x3==True and x3==mentor.Competitive_Programming):
-            interests_matched=interests_matched+1
-        if(x4==True and x4==mentor.Machine_Learning):
-            interests_matched=interests_matched+1
-        if(x5==True and x5==mentor.CyberSecurity):
-            interests_matched=interests_matched+1
-        if(x6==True and x6==mentor.Finance):
-            interests_matched=interests_matched+1
+    mentor_id=-1
+    if len(mentor_list)>0:
+        for mentor in mentor_list:
+            interests_matched=0
+            if x1==True and x1==mentor.Web_development:
+                interests_matched=interests_matched+1
+            if x2==True and x2==mentor.App_development:
+                interests_matched=interests_matched+1
+            if(x3==True and x3==mentor.Competitive_Programming):
+                interests_matched=interests_matched+1
+            if(x4==True and x4==mentor.Machine_Learning):
+                interests_matched=interests_matched+1
+            if(x5==True and x5==mentor.CyberSecurity):
+                interests_matched=interests_matched+1
+            if(x6==True and x6==mentor.Finance):
+                interests_matched=interests_matched+1
 
-        if max_interests_matched<interests_matched:
-            mentor_id=mentor.id
+            if max_interests_matched<interests_matched:
+                mentor_id=mentor.id
+    if(mentor_id==-1 and len(mentor_list)>0):
+        mentor_id=mentor_list[0].id
             
-    
     return mentor_id
 
 @app.route("/register",methods=['GET', 'POST'])
@@ -58,26 +59,30 @@ def register():
             
             db.session.add(user)
             db.session.commit()
-            # flash('your account has been created, you are now able to log in', 'success')
+            flash('your account has been created, you are now able to log in')
             return redirect(url_for('login'))
         else:
             mentor_id=match(form.web_development.data, form.app_development.data,form.competitive_programming.data,
                              form.machine_learning.data,form.cybersecurity.data,form.finance.data )
-            mentee=Mentee(username=form.username.data, email=form.email.data, password=hashed_pw,
-                            Web_development=form.web_development.data, App_development=form.app_development.data,
-                           Competitive_Programming=form.competitive_programming.data, Machine_Learning=form.machine_learning.data,
-                           CyberSecurity=form.cybersecurity.data, Finance=form.finance.data, mentor_id=mentor_id)
-            user=User(username=form.username.data, email=form.email.data, password=hashed_pw, role="mentee",
-                            Web_development=form.web_development.data, App_development=form.app_development.data,
-                           Competitive_Programming=form.competitive_programming.data, Machine_Learning=form.machine_learning.data,
-                           CyberSecurity=form.cybersecurity.data, Finance=form.finance.data)
-            db.session.add(mentee)
-            db.session.add(user)
-            mentor1=Mentor.query.filter_by(id=mentor_id).first()
-            mentor1.mentee_count=mentor1.mentee_count+1
-            db.session.commit()
-            # flash('your account has been created, you are now able to log in', 'success')
-            return redirect(url_for('login'))
+            if mentor_id==-1:
+                flash('No free mentors available right now, please try later :)')
+                return redirect(url_for('register'))
+            else:
+                mentee=Mentee(username=form.username.data, email=form.email.data, password=hashed_pw,
+                                Web_development=form.web_development.data, App_development=form.app_development.data,
+                            Competitive_Programming=form.competitive_programming.data, Machine_Learning=form.machine_learning.data,
+                            CyberSecurity=form.cybersecurity.data, Finance=form.finance.data, mentor_id=mentor_id)
+                user=User(username=form.username.data, email=form.email.data, password=hashed_pw, role="mentee",
+                                Web_development=form.web_development.data, App_development=form.app_development.data,
+                            Competitive_Programming=form.competitive_programming.data, Machine_Learning=form.machine_learning.data,
+                            CyberSecurity=form.cybersecurity.data, Finance=form.finance.data)
+                db.session.add(mentee)
+                db.session.add(user)
+                mentor1=Mentor.query.filter_by(id=mentor_id).first()
+                mentor1.mentee_count=mentor1.mentee_count+1
+                db.session.commit()
+                flash('your account has been created, you are now able to log in', 'success')
+                return redirect(url_for('login'))
 
     return render_template('register.html', title='Register', form=form)
 
@@ -97,8 +102,8 @@ def login():
             next_page=request.args.get('next')
             return redirect(next_page) if next_page else redirect(url_for('index'))
         else:
-            return redirect(url_for('register'))
-            # flash('Login Unsuccessful', 'danger')
+            flash('Login Unsuccessful')
+            return redirect(url_for('login'))
     return render_template('login.html', title='Login', form=form)
 
 
@@ -131,14 +136,35 @@ def reminder():
         msg.body = body
         mail.send(msg)
         return render_template('mentors.html', title='Reminder', form=form)
+    
+    if current_user.role=='mentee':
+        form=ReminderForm_Mentee()
+        subject=request.form.get('subject')
+        body=request.form.get('mail_content')
+        mentee=Mentee.query.filter_by(username=current_user.username).first()
+        mentor=Mentor.query.filter_by(id=mentee.mentor_id)
+        recipients_mails=[]
+        recipients_mails.append(mentor.email)
+        msg = Message(
+                subject,
+                sender ='shawspace8@gmail.com',
+                recipients = recipients_mails
+               )
+        msg.body = body
+        mail.send(msg)
+        return render_template('mentee.html', title='Reminder', form=form)
+
 
 @app.route("/profile")
 @login_required
 def profile():
     if current_user.role=='mentor':
-        return render_template('mentor_profile.html', title='Profile')
+        mentees=Mentee.query.filter_by(mentor_id=current_user.id)
+        return render_template('mentor_profile.html', title='Profile', mentees=mentees)
     if current_user.role=='mentee':
-        return render_template('mentee_profile.html', title='Profile')
+        mentee=Mentee.query.filter_by(email=current_user.email).first()
+        mentor=Mentor.query.filter_by(id=mentee.mentor_id).first()
+    return render_template('mentee_profile.html', title='Profile', mentor=mentor)
     
 rooms = {}
 
