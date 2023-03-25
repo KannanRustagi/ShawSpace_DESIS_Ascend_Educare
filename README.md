@@ -1,3 +1,3 @@
 # ShawSpace_DESIS_Ascend_Educare
-Executive Summary:
+### Executive Summary: <br>
 ShawSpace is a platform where users part of the D E SHAW mentorship programme can login/signup including both mentors and mentees and they shall be matched according to their interests of work area or otherwise.The user needs to fill out their profile once they login and choose their areas of interests.Mentees can be matched with mentors based on common interests and skills. Group chat feature allows them to communicate easily as and when they like. They can even host reminders for meeting and project deadlines. There is also a feature for video conferencing, where the mentees and mentors can interact with each other live.
