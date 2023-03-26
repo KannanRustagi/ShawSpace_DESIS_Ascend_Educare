@@ -1,3 +1,16 @@
 # ShawSpace_DESIS_Ascend_Educare
-### Executive Summary: <br>
-ShawSpace is a platform where users part of the D E SHAW mentorship programme can login/signup including both mentors and mentees and they shall be matched according to their interests of work area or otherwise.The user needs to fill out their profile once they login and choose their areas of interests.Mentees can be matched with mentors based on common interests and skills. Group chat feature allows them to communicate easily as and when they like. They can even host reminders for meeting and project deadlines. There is also a feature for video conferencing, where the mentees and mentors can interact with each other live.
+## Features included:
+<br>
+1)Login/Register <br>
+2)Display profile page, with name, designation-mentor/mentee and interests<br>
+3)Group chat room: A chat room where a user can either create a separate chat room or join an existing chat room and invite others to join the room via a room code.<br>
+4)Web conferencing: Two or more people can also get on a video call and discuss various topics.<br>
+5)Reminders: Mentors can send reminder emails to mentees about important submission dates or mentees can send emails to their mentors regarding something important they want to discuss.<br>
+6)Doubts Channel: Anyone can initiate a doubt and push it up on the board. Any of the mentors or mentees can answer it.<br>
+
+## Commands to Run:
+<br>
+Clone the project and install all requirements. Execute the command <br> pip install -r requirements.txt <br> to install requirements. If there are any additional requirements to be installed, install them too.
+<br>
+Run run.py file and click on the http link in the terminal. <br> Type node server.js in a split terminal to run the video conferencing at the same time.
+

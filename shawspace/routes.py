@@ -59,7 +59,7 @@ def register():
             
             db.session.add(user)
             db.session.commit()
-            flash('your account has been created, you are now able to log in')
+            flash('your account has been created, you are now able to login')
             return redirect(url_for('login'))
         else:
             mentor_id=match(form.web_development.data, form.app_development.data,form.competitive_programming.data,
