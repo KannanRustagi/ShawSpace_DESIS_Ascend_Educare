@@ -165,6 +165,11 @@ def profile():
         mentee=Mentee.query.filter_by(email=current_user.email).first()
         mentor=Mentor.query.filter_by(id=mentee.mentor_id).first()
     return render_template('mentee_profile.html', title='Profile', mentor=mentor)
+
+@app.route("/vc")
+@login_required
+def vc():
+    return render_template('home.html')
     
 rooms = {}
 
@@ -262,6 +267,8 @@ def disconnect():
 
     send({"name": name, "message": "has left the room"}, to=room)
     print(f"{name} has left the room {room}")
+
+
     
 
 
