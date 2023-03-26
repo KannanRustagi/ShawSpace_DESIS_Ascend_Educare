@@ -8,7 +8,7 @@
 5)Reminders: Mentors can send reminder emails to mentees about important submission dates or mentees can send emails to their mentors regarding something important they want to discuss.
 6)Doubts Channel: Anyone can initiate a doubt and push it up on the board. Any of the mentors or mentees can answer it.
 
-## Commands to Run
+## Commands to Run:
 <br>
 Clone the project and install all requirements. Execute the command pip install -r requirements.txt to install requirements. If there are any additional requirements to be installed, install them too.
 <br>
