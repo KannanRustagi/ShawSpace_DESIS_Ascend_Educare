@@ -12,5 +12,5 @@
 <br>
 Clone the project and install all requirements. Execute the command <br> pip install -r requirements.txt <br> to install requirements. If there are any additional requirements to be installed, install them too.
 <br>
-Run run.py file and click on the http link in the terminal. 
+Run run.py file and click on the http link in the terminal. <br> Type node server.js in a split terminal to run the video conferencing at the same time.
 
