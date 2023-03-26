@@ -30,3 +30,10 @@ social-auth-core==3.3.3
 sqlparse==0.3.1
 urllib3==1.25.9
 whitenoise==5.0.1
+Flask
+Flask-SQLAlchemy
+Flask-WTF
+flask-login
+flask-bcrypt
+Flask-Mail
+flask-socketio
