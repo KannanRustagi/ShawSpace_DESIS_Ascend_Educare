@@ -10,6 +10,7 @@
 <br>
 You can also refer to the project report titled 'ShawSpace report' for a detailed description of our application.<br>
 <br>
+
 ## Commands to Run:
 <br>
 Clone the project and install all requirements. Execute the command <br> pip install -r requirements.txt <br> to install requirements. If there are any additional requirements to be installed, install them too.
