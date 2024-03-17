@@ -7,6 +7,9 @@
 4)Web conferencing: Two or more people can also get on a video call and discuss various topics.<br>
 5)Reminders: Mentors can send reminder emails to mentees about important submission dates or mentees can send emails to their mentors regarding something important they want to discuss.<br>
 6)Doubts Channel: Anyone can initiate a doubt and push it up on the board. Any of the mentors or mentees can answer it.<br>
+<br>
+You can also refer to the project report titled 'ShawSpace report' for a detailed description of our application.<br>
+<br>
 
 ## Commands to Run:
 <br>
